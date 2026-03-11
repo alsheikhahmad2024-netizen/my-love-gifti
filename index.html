@@ -6,23 +6,72 @@
   <title>هديتي لك يا ömrüm♥️</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    body { font-family: 'Segoe UI', Tahoma, sans-serif; background: linear-gradient(to bottom, #1e3a8a, #000); color: white; }
-    .heart { animation: beat 1.4s infinite; }
-    @keyframes beat { 0%,100% { transform: scale(1); } 50% { transform: scale(1.15); } }
+    body {
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      background: linear-gradient(to bottom, #1e3a8a, #000);
+      color: white;
+      overflow: hidden; /* عشان القلوب ما تخرج برا */
+    }
+    .heart-beat {
+      animation: heartbeat 1.5s infinite ease-in-out;
+    }
+    @keyframes heartbeat {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.15); }
+    }
+    .float-title {
+      animation: float 6s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    .btn-pulse {
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    /* قلوب تطير في الخلفية */
+    .hearts-bg {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      pointer-events: none;
+      z-index: -1;
+    }
+    .heart-float {
+      position: absolute;
+      font-size: 2rem;
+      opacity: 0.6;
+      animation: float-heart linear infinite;
+      color: #ff69b4;
+    }
+    @keyframes float-heart {
+      0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+      10% { opacity: 0.8; }
+      90% { opacity: 0.8; }
+      100% { transform: translateY(-20vh) rotate(360deg); opacity: 0; }
+    }
   </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4">
+<body class="min-h-screen flex items-center justify-center p-4 relative">
+
+  <!-- قلوب تطير في الخلفية -->
+  <div class="hearts-bg" id="heartsContainer"></div>
 
   <!-- شاشة كلمة السر -->
-  <div id="lockScreen" class="text-center space-y-6 max-w-md w-full">
-    <h1 class="text-4xl md:text-5xl font-bold heart">❤️ لـ ömrüm♥️ ❤️</h1>
+  <div id="lockScreen" class="text-center space-y-6 max-w-md w-full z-10">
+    <h1 class="text-5xl md:text-6xl font-bold heart-beat float-title">❤️ لـ ömrüm♥️ ❤️</h1>
     <p class="text-xl opacity-90">في عيونك لقيت الدنيا كلها..</p>
     
     <input id="password" type="password" placeholder="كلمة السر بيننا فقط 🔒"
            class="w-full px-6 py-4 rounded-2xl bg-white/10 text-center text-xl focus:outline-none focus:ring-2 focus:ring-pink-500">
     
     <button onclick="checkPassword()"
-            class="w-full bg-pink-600 hover:bg-pink-700 py-4 rounded-2xl text-xl font-bold transition">
+            class="w-full bg-pink-600 hover:bg-pink-700 py-4 rounded-2xl text-xl font-bold transition btn-pulse">
       افتح الهدية ✨
     </button>
     
@@ -30,20 +79,17 @@
   </div>
 
   <!-- المحتوى بعد فتح السر -->
-  <div id="content" class="hidden text-center space-y-10 max-w-md w-full">
-    <h1 class="text-5xl md:text-6xl font-bold heart">أحبك يا ömrüm♥️ ❤️</h1>
+  <div id="content" class="hidden text-center space-y-10 max-w-md w-full z-10">
+    <h1 class="text-5xl md:text-6xl font-bold heart-beat float-title">أحبك يا ömrüm♥️ ❤️</h1>
     
-    <!-- صورة 1 - استخدمت الصورة اللي بعثتها -->
     <img src="https://files.catbox.moe/0j4z0k.jpg" class="rounded-3xl shadow-2xl w-full mx-auto" alt="ذكرى حلوة">
     
-    <!-- الأغنية -->
     <div>
       <p class="text-lg mb-4">أغنيتنا الخاصة 🎶</p>
       <iframe width="100%" height="200" src="https://www.youtube.com/embed/Oc6peHYekG0?autoplay=1&mute=0" 
-              title="أغنيتنا" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen class="rounded-2xl"></iframe>
+              frameborder="0" allowfullscreen class="rounded-2xl"></iframe>
     </div>
     
-    <!-- الرسالة الخاصة -->
     <div class="bg-white/10 p-8 rounded-3xl text-lg leading-relaxed">
       يا ömrüm♥️،<br><br>
       هَلْ مِنْ طَبِيبٍ لِدَاءِ الْحُبِّ أَوْ رَاقِي<br>
@@ -57,9 +103,10 @@
   </div>
 
   <script>
+    // كلمة السر
     function checkPassword() {
       const pass = document.getElementById("password").value.trim();
-      const realPass = "3/11";  // كلمة السر اللي طلبتها
+      const realPass = "3/11";
 
       if (pass === realPass) {
         document.getElementById("lockScreen").classList.add("hidden");
@@ -68,6 +115,23 @@
         alert("كلمة السر غلط يا قلبي.. جرب تاني 😉");
       }
     }
+
+    // إنشاء قلوب تطير عشوائيًا
+    function createFloatingHeart() {
+      const heart = document.createElement("div");
+      heart.className = "heart-float";
+      heart.innerHTML = "❤️";
+      heart.style.left = Math.random() * 100 + "vw";
+      heart.style.animationDuration = (Math.random() * 10 + 10) + "s"; // سرعة عشوائية
+      heart.style.animationDelay = Math.random() * 5 + "s";
+      document.getElementById("heartsContainer").appendChild(heart);
+
+      // حذف القلوب بعد ما تخلص التحرك عشان ما يثقل الصفحة
+      setTimeout(() => heart.remove(), 15000);
+    }
+
+    // إنشاء قلب كل 1-2 ثانية
+    setInterval(createFloatingHeart, 1200);
   </script>
 
 </body>
