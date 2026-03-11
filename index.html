@@ -65,6 +65,20 @@
         alert("خطأ يا قلبي.. جرب تاني 😉");
       }
     }
+
+<script>
+  function checkPassword() {
+    const pass = document.getElementById("password").value;
+    const realPass = "سرنا_الخاص";   // ← غيّر هنا لكلمة السر اللي تبيها (مثلاً "احمدوحبي" أو "15082024" أو أي شيء خاص)
+
+    if (pass === realPass) {
+      document.getElementById("lockScreen").classList.add("hidden");
+      document.getElementById("content").classList.remove("hidden");
+    } else {
+      alert("خطأ يا قلبي.. جرب تاني 😉");
+    }
+  }
+</script>
   </script>
 </body>
 </html>
